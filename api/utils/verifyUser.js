@@ -1,15 +1,15 @@
-import { errorHandler } from "./error.js";
-import  Jwt from "jsonwebtoken";
+import jwt from 'jsonwebtoken';
+import { errorHandler } from './error.js';
 
-export const verifyToken = (req, res, next) =>{
-     const token =req.cookies.access_token;
-     if (!token) return next(errorHandler(401,'Unauthorized'));
+export const verifyToken = (req, res, next) => {
+  const token = req.cookies.access_token;
 
-     Jwt.verify(token, process.env.JWT_SECRET,(err,user)=>{
-        if(err) return next(errorHandler(403,'Token Is not valid'));
+  if (!token) return next(errorHandler(401, 'Unauthorized User(you can make action only in your account)'));
 
-        req.user = user;
-        next();
-     })
+  jwt.verify(token, process.env.JWT_SECRET, (err, user) => {
+    if (err) return next(errorHandler(403, 'Invalid access_token'));
 
-}
+    req.user = user;
+    next();
+  });
+};
